@@ -52,4 +52,12 @@ public class HealthBar : MonoBehaviour
         gameObject.transform.localScale = tmpScale;
     }
 
+    //New Code for RNG:
+    //used to change hp value for enemy 5 boss
+    public void SetHP(int hp)
+    {
+        currentHealth = hp;
+        maxHealth = hp;
+    }
+
 }

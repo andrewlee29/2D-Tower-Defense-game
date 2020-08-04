@@ -30,6 +30,7 @@
 
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 [System.Serializable]
 public class Wave
@@ -44,6 +45,10 @@ public class SpawnEnemy : MonoBehaviour
 
     public GameObject[] waypoints;
     public GameObject testEnemyPrefab;
+    //New Code:
+    //public GameObject enemyPrefab1;
+    //public GameObject enemyPrefab2;
+    public List<GameObject> enemies = new List<GameObject>();
 
     public Wave[] waves;
     public int timeBetweenWaves = 5;
@@ -58,6 +63,8 @@ public class SpawnEnemy : MonoBehaviour
     {
         lastSpawnTime = Time.time;
         gameManager = GameObject.Find("GameManager").GetComponent<GameManagerBehavior>();
+        //enemies.Add(enemyPrefab1);
+        //enemies.Add(enemyPrefab2);
     }
 
     // Update is called once per frame
@@ -74,11 +81,24 @@ public class SpawnEnemy : MonoBehaviour
                  timeInterval > spawnInterval) &&
                 enemiesSpawned < waves[currentWave].maxEnemies)
             {
+                //New:
+                int i = SpawnRate();
+                GameObject chosenPrefab = enemies[i];
+                if (i == 4)
+                {
+                    var scriptRef = chosenPrefab.GetComponent<HealthBar>();
+                    if(scriptRef != null)
+                    {
+                        scriptRef.SetHP(Random.Range(300, 400));
+                    }
+                }
+                ////////
                 // 3  
                 lastSpawnTime = Time.time;
-                GameObject newEnemy = (GameObject)
-                    Instantiate(waves[currentWave].enemyPrefab);
-                newEnemy.GetComponent<MoveEnemy>().waypoints = waypoints;
+               //OLD GameObject newEnemy = (GameObject)Instantiate(waves[currentWave].enemyPrefab);
+                GameObject newEnemyTest = (GameObject)Instantiate(chosenPrefab);
+                //OLD newEnemy.GetComponent<MoveEnemy>().waypoints = waypoints;
+                newEnemyTest.GetComponent<MoveEnemy>().waypoints = waypoints;
                 enemiesSpawned++;
             }
             // 4 
@@ -99,5 +119,36 @@ public class SpawnEnemy : MonoBehaviour
             gameOverText.GetComponent<Animator>().SetBool("gameOver", true);
         }
     }
-
+    //New Code: handles spawning different enemies
+    public int SpawnRate()
+    {
+        int rate = Random.Range(1, 50);
+        Debug.Log("RNG: " + rate);
+        if (rate >= 1 && rate <= 20)
+        {
+            Debug.Log("Pos: 1");
+            return 4;
+        }
+        else if (rate >= 21 && rate <= 35)
+        {
+            Debug.Log("Pos: 2");
+            return 1;
+        }
+        else if (rate >= 36 && rate <= 43)
+        {
+            Debug.Log("Pos: 3");
+            return 2;
+        }
+        else if (rate >= 44 && rate <= 49)
+        {
+            Debug.Log("Pos: 4");
+            return 3;
+        }
+        else if (rate == 50)
+        {
+            Debug.Log("Pos: 5");
+            return 4;
+        }
+        return 1;
+    }
 }
